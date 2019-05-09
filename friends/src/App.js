@@ -7,6 +7,7 @@ import Header from "./components/Header";
 import DisplayPanel from "./components/DisplayPanel";
 import Operations from "./components/Operations";
 import { Route } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 
 class App extends React.Component {
   constructor(props) {
@@ -53,7 +54,7 @@ class App extends React.Component {
     console.log(this.state.friends.find(friend => friend.id === id));
   };
 
-  addItem = (e, item) => {
+  addItem = (e, item, history) => {
     e.preventDefault();
     console.log("in add item" + item);
     if (item !== undefined && item !== null) {
@@ -67,14 +68,14 @@ class App extends React.Component {
           length: res.data.length
         });
         // HTTP STEP V - Clear data form in ItemForm and route to /item-list
-        //this.props.history.push("/");
+        history.push("/");
       })
       .catch(err => {
         console.log(err);
       });
   };
 
-  deleteItem = (e, id) => {
+  deleteItem = (e, id, history) => {
     e.preventDefault();
     console.log("now in deleteItem in App");
     axios
@@ -85,14 +86,16 @@ class App extends React.Component {
           friends: res.data,
           length: res.data.length
         });
-        this.props.history.push("/");
+        history.push("/");
       })
       .catch(err => {
         console.log(err);
       });
   };
 
-  updateItem = (e, item) => {
+  updateItem = (e, item, history) => {
+    console.log("hhhhhhhhhhhh" + history);
+    //const { match, location, history } = this.props;
     e.preventDefault();
     console.log("In update item now");
     if (item !== undefined && item !== null) {
@@ -100,11 +103,7 @@ class App extends React.Component {
     }
     let id = item.id;
     axios
-      .put(`http://localhost:5000/friends/${id}`, {
-        name: item.name,
-        age: item.age,
-        email: item.email
-      })
+      .put(`http://localhost:5000/friends/${id}`, item)
       .then(res => {
         this.setState({
           friends: res.data,
@@ -112,14 +111,15 @@ class App extends React.Component {
         });
       })
       .catch(error => console.log(error));
+    history.push("/");
   };
 
-  componentDidUpdate() {
-    console.log("--------In CDU ---------------");
-    console.log(this.state.friends);
-    console.log(this.state.selectedFriend);
-    console.log(this.state.length);
-  }
+  // componentDidUpdate() {
+  //   console.log("--------In CDU ---------------");
+  //   console.log(this.state.friends);
+  //   console.log(this.state.selectedFriend);
+  //   console.log(this.state.length);
+  // }
 
   render() {
     console.log("-------value of length + 1 is " + (this.state.length + 1));
